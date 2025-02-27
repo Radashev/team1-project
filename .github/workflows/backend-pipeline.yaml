@@ -1,0 +1,38 @@
+name: Backend CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Крок 1: Клонування репозиторію
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Крок 2: Налаштування Docker
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Крок 3: Встановлення Docker Compose
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install docker-compose
+
+      # Крок 4: Створення Docker образу для бекенду
+      - name: Build backend Docker image
+        run: |
+          docker-compose build
+
+      # Крок 5: Запуск тестів
+      - name: Run backend tests
+        run: |
+          docker-compose run --rm app pytest  # Запускає тести всередині контейнера
